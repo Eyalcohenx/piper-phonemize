@@ -1,4 +1,3 @@
-import platform
 from pathlib import Path
 
 # Available at setup time due to pyproject.toml
@@ -6,9 +5,14 @@ from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
 
 _DIR = Path(__file__).parent
-_ESPEAK_DIR = _DIR / "espeak-ng" / "build"
-_LIB_DIR = _DIR / "lib" / f"Linux-{platform.machine()}"
-_ONNXRUNTIME_DIR = _LIB_DIR / "onnxruntime"
+_ESPEAK_DIR = _DIR / "build" / "ei"
+_LIB_DIR = _DIR / "lib"
+
+matches = list(_LIB_DIR.glob("onnxruntime-linux-*"))
+if not matches:
+    raise RuntimeError(f"No directory starting with 'onnxruntime-linux-' found in {_LIB_DIR}")
+
+_ONNXRUNTIME_DIR = matches[0]  # Use the first match
 
 __version__ = "1.2.0"
 
